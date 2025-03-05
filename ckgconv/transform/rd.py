@@ -22,10 +22,9 @@ from einops import rearrange, reduce, repeat, einsum
 import networkx as nx
 
 
-def add_node_attr(data: Data, value: Any,
-                  attr_name: Optional[str] = None) -> Data:
+def add_node_attr(data: Data, value: Any, attr_name: Optional[str] = None) -> Data:
     if attr_name is None:
-        if 'x' in data:
+        if "x" in data:
             x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
             data.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
         else:
@@ -34,32 +33,36 @@ def add_node_attr(data: Data, value: Any,
         data[attr_name] = value
 
     return data
+
+
 #
 
 
 @torch.no_grad()
-def add_rd(data,
-                      walk_length=8,
-                      attr_name_abs="spd", # name: 'rrwp'
-                      attr_name_rel="spd", # name: ('rrwp_idx', 'rrwp_val')
-                      add_identity=True,
-                      add_uniform=False,
-                      denormalize=False,
-                      spd=False,
-                      topk: Optional[int]=None,
-                      use_sym=False,
-                      **kwargs
-                      ):
+def add_rd(
+    data,
+    walk_length=8,
+    attr_name_abs="spd",  # name: 'rrwp'
+    attr_name_rel="spd",  # name: ('rrwp_idx', 'rrwp_val')
+    add_identity=True,
+    add_uniform=False,
+    denormalize=False,
+    spd=False,
+    topk: Optional[int] = None,
+    use_sym=False,
+    **kwargs,
+):
 
-    device=data.edge_index.device
+    device = data.edge_index.device
     ind_vec = torch.eye(walk_length, dtype=torch.float, device=device)
     num_nodes = data.num_nodes
     edge_index, edge_weight = data.edge_index, data.edge_weight
 
-    adj = SparseTensor.from_edge_index(edge_index, edge_weight,
-                                       sparse_sizes=(num_nodes, num_nodes),
-                                       )
-
+    adj = SparseTensor.from_edge_index(
+        edge_index,
+        edge_weight,
+        sparse_sizes=(num_nodes, num_nodes),
+    )
 
     # Compute D^{-1} A:
     deg = adj.sum(dim=1)
@@ -70,11 +73,9 @@ def add_rd(data,
 
     adj = adj.to_dense()
 
-
     # compute resistance distance via NetworkX
     NxG = pyg.utils.to_networkx(data=data, to_undirected=True, remove_self_loops=True)
     rd = nx.resistance_distance(NxG, nodeA=None, nodeB=None)
-
 
     # lazy and stupid way to convert dict from networkx to edge_index in PyG
     row = []
@@ -89,9 +90,11 @@ def add_rd(data,
             col.append(k_2)
             val.append(v_2)
 
-    rel_pe_row, rel_pe_col, rel_pe_val = torch.LongTensor(row), torch.LongTensor(col), torch.Tensor(val)
-
-
+    rel_pe_row, rel_pe_col, rel_pe_val = (
+        torch.LongTensor(row),
+        torch.LongTensor(col),
+        torch.Tensor(val),
+    )
 
     # rel_pe_idx = torch.stack([rel_pe_row, rel_pe_col], dim=-2)
     # Fixme: fatal bug --> pyg is right matmul, need row-sum to one, now is col-sum to one.
@@ -103,4 +106,3 @@ def add_rd(data,
     data.deg = deg.type(torch.long)
 
     return data
-

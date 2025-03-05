@@ -5,7 +5,7 @@ from torch_geometric.graphgym import cfg
 from torch_geometric.graphgym.register import register_head
 
 
-@register_head('ogb_code_graph')
+@register_head("ogb_code_graph")
 class OGBCodeGraphHead(nn.Module):
     """
     Sequence prediction head for ogbg-code2 graph-level prediction tasks.
@@ -31,7 +31,7 @@ class OGBCodeGraphHead(nn.Module):
             self.graph_pred_linear_list.append(nn.Linear(dim_in, num_vocab))
 
     def _apply_index(self, batch):
-        return batch.pred_list, {'y_arr': batch.y_arr, 'y': batch.y}
+        return batch.pred_list, {"y_arr": batch.y_arr, "y": batch.y}
 
     def forward(self, batch):
         graph_emb = self.pooling_fun(batch.x, batch.batch)

@@ -6,8 +6,7 @@ from torch import nn
 import torch_geometric as pyg
 
 
-
-@register_node_encoder('GraphormerDeg')
+@register_node_encoder("GraphormerDeg")
 class GraphormerDegEncoder(torch.nn.Module):
     def __init__(self, emb_dim, max_deg=150):
         super().__init__()
@@ -18,13 +17,11 @@ class GraphormerDegEncoder(torch.nn.Module):
         if "deg" in batch:
             deg = batch.deg
         else:
-            deg = pyg.utils.degree(batch.edge_index[1],
-                                   num_nodes=batch.num_nodes,
-                                   dtype=torch.float
-                                   )
+            deg = pyg.utils.degree(
+                batch.edge_index[1], num_nodes=batch.num_nodes, dtype=torch.float
+            )
 
         deg_emb = self.deg_emb(deg.type(torch.long))
-        
+
         batch.x = batch.x + deg_emb
         return batch
-

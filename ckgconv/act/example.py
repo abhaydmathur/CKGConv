@@ -19,6 +19,7 @@ class SWISH(nn.Module):
         else:
             return x * torch.sigmoid(x)
 
+
 class SignedSqrt(nn.Module):
     def __init__(self):
         super().__init__()
@@ -28,11 +29,14 @@ class SignedSqrt(nn.Module):
         return x
 
 
-
-register_act('swish', partial(SWISH, inplace=cfg.mem.inplace))
-register_act('lrelu_03', partial(nn.LeakyReLU, negative_slope=0.3, inplace=cfg.mem.inplace))
-register_act('lrelu_02', partial(nn.LeakyReLU, negative_slope=0.2, inplace=cfg.mem.inplace))
+register_act("swish", partial(SWISH, inplace=cfg.mem.inplace))
+register_act(
+    "lrelu_03", partial(nn.LeakyReLU, negative_slope=0.3, inplace=cfg.mem.inplace)
+)
+register_act(
+    "lrelu_02", partial(nn.LeakyReLU, negative_slope=0.2, inplace=cfg.mem.inplace)
+)
 # Add Gaussian Error Linear Unit (GELU).
-register_act('gelu', nn.GELU)
+register_act("gelu", nn.GELU)
 # register_act('elu', partial(nn.ELU, inplace=cfg.mem.inplace))
-register_act('none', nn.Identity)
+register_act("none", nn.Identity)

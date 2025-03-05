@@ -9,9 +9,9 @@ from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.register import register_network
 
 
-@register_network('example')
+@register_network("example")
 class ExampleGNN(torch.nn.Module):
-    def __init__(self, dim_in, dim_out, num_layers=2, model_type='GCN'):
+    def __init__(self, dim_in, dim_out, num_layers=2, model_type="GCN"):
         super().__init__()
         conv_model = self.build_conv_model(model_type)
         self.convs = nn.ModuleList()
@@ -24,14 +24,14 @@ class ExampleGNN(torch.nn.Module):
         self.post_mp = GNNHead(dim_in=dim_in, dim_out=dim_out)
 
     def build_conv_model(self, model_type):
-        if model_type == 'GCN':
+        if model_type == "GCN":
             return pyg_nn.GCNConv
-        elif model_type == 'GAT':
+        elif model_type == "GAT":
             return pyg_nn.GATConv
         elif model_type == "GraphSage":
             return pyg_nn.SAGEConv
         else:
-            raise ValueError(f'Model {model_type} unavailable')
+            raise ValueError(f"Model {model_type} unavailable")
 
     def forward(self, batch):
         x, edge_index = batch.x, batch.edge_index

@@ -2,7 +2,7 @@ from torch_geometric.graphgym.register import register_config
 from yacs.config import CfgNode as CN
 
 
-@register_config('cfg_gt')
+@register_config("cfg_gt")
 def set_cfg_gt(cfg):
     """Configuration for Graph Transformer-style models, e.g.:
     - Spectral Attention Network (SAN) Graph Transformer.
@@ -15,7 +15,7 @@ def set_cfg_gt(cfg):
 
     # Type of Graph Transformer layer to use
     # cfg.gt.layer_type = 'SANLayer'
-    cfg.gt.layer_type = 'GritTransformer'
+    cfg.gt.layer_type = "GritTransformer"
 
     # Number of Transformer layers in the model
     cfg.gt.layers = 3
@@ -44,7 +44,7 @@ def set_cfg_gt(cfg):
     cfg.gt.layer_norm = False
 
     cfg.gt.batch_norm = True
-    cfg.gt.bn_momentum = 0.1 # 0.01
+    cfg.gt.bn_momentum = 0.1  # 0.01
     cfg.gt.bn_no_runner = False
 
     cfg.gt.residual = True
@@ -80,7 +80,7 @@ def set_cfg_gt(cfg):
     cfg.gt.attn.sparse = False
     cfg.gt.attn.deg_scaler = True
     cfg.gt.attn.use_bias = False
-    cfg.gt.attn.clamp = 5.
+    cfg.gt.attn.clamp = 5.0
     cfg.gt.attn.act = "relu"
     cfg.gt.attn.full_attn = True
     cfg.gt.attn.norm_e = True
@@ -92,14 +92,10 @@ def set_cfg_gt(cfg):
     cfg.gt.attn.sigmoid_deg = False
     cfg.gt.attn.graphormer_attn = False
 
-
     # ----- PE encoder (only for GRIT) ----
-    cfg.gt.node_pe_encoder = 'rrwp_linear'
-    cfg.gt.edge_pe_encoder = 'rrwp_linear'
+    cfg.gt.node_pe_encoder = "rrwp_linear"
+    cfg.gt.edge_pe_encoder = "rrwp_linear"
 
     cfg.gt.stem = CN()
     cfg.gt.stem.node_stem = None
     cfg.gt.stem.edge_stem = None
-
-
-

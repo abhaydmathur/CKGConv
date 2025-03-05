@@ -2,10 +2,9 @@ from torch_geometric.graphgym.register import register_config
 from yacs.config import CfgNode as CN
 
 
-@register_config('cfg_wandb')
+@register_config("cfg_wandb")
 def set_cfg_wandb(cfg):
-    """Weights & Biases tracker configuration.
-    """
+    """Weights & Biases tracker configuration."""
 
     # WandB group
     cfg.wandb = CN()

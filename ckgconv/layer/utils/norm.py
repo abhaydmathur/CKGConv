@@ -1,6 +1,3 @@
-
-
-
 import torch
 from torch import nn
 
@@ -17,4 +14,4 @@ class RMSLayerNorm(nn.Module):
 
     def forward(self, x):
         std = torch.sqrt(1e-6 + torch.mean(x**2, dim=-1, keepdim=True))
-        return x/std * self.gamma + self.beta
+        return x / std * self.gamma + self.beta

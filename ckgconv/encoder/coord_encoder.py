@@ -1,6 +1,7 @@
-'''
+"""
     The RRWP encoder for GRIT (ours)
-'''
+"""
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -18,14 +19,13 @@ from torch_scatter import scatter
 import warnings
 
 
-
-
-@register_node_encoder('coord_linear')
+@register_node_encoder("coord_linear")
 class CoordLinearEncoder(torch.nn.Module):
-    '''
-        Preprocess the coord
-    '''
-    def __init__(self, emb_dim, out_dim, attr_name='pe'):
+    """
+    Preprocess the coord
+    """
+
+    def __init__(self, emb_dim, out_dim, attr_name="pe"):
         super().__init__()
 
         self.encoder = torch.nn.Linear(emb_dim, out_dim)

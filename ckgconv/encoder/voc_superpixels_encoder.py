@@ -1,7 +1,9 @@
 import torch
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.register import (register_node_encoder,
-                                               register_edge_encoder)
+from torch_geometric.graphgym.register import (
+    register_node_encoder,
+    register_edge_encoder,
+)
 
 """
 === Description of the VOCSuperpixels dataset === 
@@ -15,7 +17,8 @@ Shape of y : [num_nodes]
 VOC_node_input_dim = 14
 # VOC_edge_input_dim = 1 or 2; defined in class VOCEdgeEncoder
 
-@register_node_encoder('VOCNode')
+
+@register_node_encoder("VOCNode")
 class VOCNodeEncoder(torch.nn.Module):
     def __init__(self, emb_dim):
         super().__init__()
@@ -29,12 +32,12 @@ class VOCNodeEncoder(torch.nn.Module):
         return batch
 
 
-@register_edge_encoder('VOCEdge')
+@register_edge_encoder("VOCEdge")
 class VOCEdgeEncoder(torch.nn.Module):
     def __init__(self, emb_dim):
         super().__init__()
 
-        VOC_edge_input_dim = 2 if cfg.dataset.name == 'edge_wt_region_boundary' else 1
+        VOC_edge_input_dim = 2 if cfg.dataset.name == "edge_wt_region_boundary" else 1
         self.encoder = torch.nn.Linear(VOC_edge_input_dim, emb_dim)
         # torch.nn.init.xavier_uniform_(self.encoder.weight.data)
 

@@ -6,11 +6,12 @@ from torch_geometric.graphgym.register import register_edge_encoder, act_dict
 import torch_geometric as pyg
 
 
-@register_edge_encoder('DeepsetEdge')
+@register_edge_encoder("DeepsetEdge")
 class DeepsetEdgeEncoder(torch.nn.Module):
-    '''
+    """
     For following LinearEdge or RRWPLinear
-    '''
+    """
+
     def __init__(self, emb_dim, batchnorm=False):
         super().__init__()
 
@@ -29,7 +30,7 @@ class DeepsetEdgeEncoder(torch.nn.Module):
     def forward(self, batch):
 
         edge_attr = self.batchnorm_e(batch.edge_attr)
-        if 'batch' not in batch:
+        if "batch" not in batch:
             batch.batch = batch.e.new_zeros(batch.num_nodes)
 
         edge_batch = batch.batch[batch.edge_index[0]]

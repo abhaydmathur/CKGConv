@@ -20,10 +20,9 @@ from torch_sparse import SparseTensor
 from einops import rearrange, reduce, repeat, einsum
 
 
-def add_node_attr(data: Data, value: Any,
-                  attr_name: Optional[str] = None) -> Data:
+def add_node_attr(data: Data, value: Any, attr_name: Optional[str] = None) -> Data:
     if attr_name is None:
-        if 'x' in data:
+        if "x" in data:
             x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
             data.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
         else:
@@ -32,37 +31,41 @@ def add_node_attr(data: Data, value: Any,
         data[attr_name] = value
 
     return data
+
+
 #
 
 
 @torch.no_grad()
-def add_spd(data,
-                      walk_length=8,
-                      attr_name_abs="spd", # name: 'rrwp'
-                      attr_name_rel="spd", # name: ('rrwp_idx', 'rrwp_val')
-                      add_identity=True,
-                      add_uniform=False,
-                      denormalize=False,
-                      spd=False,
-                      topk: Optional[int]=None,
-                      use_sym=False,
-                      **kwargs
-                      ):
+def add_spd(
+    data,
+    walk_length=8,
+    attr_name_abs="spd",  # name: 'rrwp'
+    attr_name_rel="spd",  # name: ('rrwp_idx', 'rrwp_val')
+    add_identity=True,
+    add_uniform=False,
+    denormalize=False,
+    spd=False,
+    topk: Optional[int] = None,
+    use_sym=False,
+    **kwargs,
+):
 
-    device=data.edge_index.device
+    device = data.edge_index.device
     ind_vec = torch.eye(walk_length, dtype=torch.float, device=device)
     num_nodes = data.num_nodes
     edge_index, edge_weight = data.edge_index, data.edge_weight
 
-    adj = SparseTensor.from_edge_index(edge_index, edge_weight,
-                                       sparse_sizes=(num_nodes, num_nodes),
-                                       )
-
+    adj = SparseTensor.from_edge_index(
+        edge_index,
+        edge_weight,
+        sparse_sizes=(num_nodes, num_nodes),
+    )
 
     # Compute D^{-1} A:
     deg = adj.sum(dim=1)
     deg_inv = 1.0 / adj.sum(dim=1)
-    deg_inv[deg_inv == float('inf')] = 0
+    deg_inv[deg_inv == float("inf")] = 0
     adj = adj * deg_inv.view(-1, 1)
     adj = adj.to_dense()
 
@@ -77,15 +80,14 @@ def add_spd(data,
 
     cache += adj
 
-    for j in range(i + 1, walk_length+1):
+    for j in range(i + 1, walk_length + 1):
         out = out @ adj
         pe_list.append(out)
         cache += out
         if cache.all():
             break
 
-
-    pe = torch.stack(pe_list, dim=-1) # n x n x k
+    pe = torch.stack(pe_list, dim=-1)  # n x n x k
     # abs_pe = pe.diagonal().transpose(0, 1)[:, 1:] # n x k
 
     adder = torch.zeros(1, pe.size(-1))
@@ -107,4 +109,3 @@ def add_spd(data,
     data.deg = deg.type(torch.long)
 
     return data
-
